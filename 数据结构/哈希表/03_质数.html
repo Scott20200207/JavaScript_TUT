@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>判断质数</title>
+</head>
+
+<body>
+    <script>
+        //什么是质数: 质数也称素数, 只能被1或者自己整除的且大于1的自然数
+        function isPrime1(num) {
+            for (let i = 2; i < num; i++) {
+                if (num % i == 0) return false
+            }
+            return true
+        }
+
+        //sqrt(n) 数字有小于等于平方根,和大于等于平方根的数相乘获取,只要小于平方根的数字存在,则不是质数
+        //举例: 16 ->  sqrt(16)=4   2*8, 4*4 所以只要2*8中的2选项存在,则16不是质数
+        function isPrime2(num) {
+            var tmp = Math.sqrt(num)
+            for (let i = 2; i <= tmp; i++) {
+                if (num % i == 0) return false          
+            }
+            return true
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // var objects = [{x:1}, {y:2}, {z:3}]
+        // var merged = objects.reduce(union)
+        // console.log(objects, merged)
+
+        var a = [1,2,3,4]
+        var sum = a.reduceRight(function(x,y){
+            console.log(x, y , x+y)
+            return x+y
+        },0)
+        console.log(a, sum)
+        console.log("-------------")
+        console.log(typeof([]))
+        console.log(typeof({}))
+        console.log(typeof("abc"))
+
+        function Test(){
+
+        }
+        console.log(typeof(Test))
+        console.log(Math.floor(1.5)===2)
+        console.log(Math.ceil(1.5))
+
+    </script>
+</body>
+</html>

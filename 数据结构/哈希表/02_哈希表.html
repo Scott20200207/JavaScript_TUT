@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HashTable实现</title>
+</head>
+
+<body>
+    <script>
+        //封装哈希表类
+        //使用链地址方式实现
+        function HashTable() {
+            //属性, 加载因子 loadFactor < 0.25 缩表, loadFactor > 0.75扩容
+            this.storage = [] //存放所有元素
+            this.count = 0 //已经存放的元素个数
+            this.limit = 7 //最大长度
+        }
+
+        //哈希函数
+        HashTable.prototype.hashFunc = function (str, arraySize) {
+            //a. 定一个hashcode变量
+            var hashcode = 0
+            //b. 使用霍纳算法,来计算hashcode
+            //cast => unicode编码
+            for (var i = 0; i < str.length; i++) {
+                hashcode = 37 * hashcode + str.charCodeAt(i)//31, 37, 41, 43 质数 
+            }
+            //c. 取余操作
+            var index = hashcode % arraySize  // var index = hashcode & (arraySize-1) = hashcode % arraySize 效果等同
+            return index
+        }
+
+        //添加&修改操作
+        //1. 根据key获取索引值
+        //2. 根据索引值取出bucket
+        //   a. bucket不存在则创建bucket
+        //3. 判断是修改还是新增
+        //4. 添加
+        HashTable.prototype.put = function (key, value) {
+            //1. 根据key获取索引值
+            var index = this.hashFunc(key, this.limit)
+            //2. 根据索引值取出对应的bucket
+            var bucket = this.storage[index]
+            //3. 判断该bucket是否为空
+            if (!bucket) {
+                bucket = []
+                this.storage[index] = bucket
+            }
+            //4. 判断是否需要修改数据
+            for (let i = 0; i < bucket.length; i++) {
+                var tuple = bucket[i];
+                if (tuple[0] == key) {
+                    tuple[1] = value
+                    return
+                }
+            }
+            //5. 添加数据
+            bucket.push([key, value])
+            this.count += 1
+
+            //6. 当负载因子大于0.75时需要扩容
+            if (this.count > this.limit * 0.75) {
+                var newSize = this.limit * 2
+                var prime = this.getPrime(newSize)
+                this.resize(prime)
+            }
+        }
+
+        //获取操作
+        HashTable.prototype.get = function (key) {
+            //1. 根据key获取索引值
+            var index = this.hashFunc(key, this.limit)
+
+            //2. 根据索引值获取bucket
+            var bucket = this.storage[index]
+
+            //3. 判断bucket是否为空
+            if (!bucket) {
+                //不存在桶返回null
+                return null
+            }
+
+            //4. 在链条中线性查找
+            for (let i = 0; i < bucket.length; i++) {
+                const tuple = bucket[i];
+                if (tuple[0] == key) return tuple[1]
+            }
+
+            //没找到返回null
+            return null
+        }
+
+        //删除操作
+        HashTable.prototype.remove = function (key) {
+            //1. 根据key获取索引值
+            var index = this.hashFunc(key, this.limit)
+
+            //2. 根据索引值获取bucket
+            var bucket = this.storage[index]
+
+            //3. 判断bucket是否为空
+            if (!bucket) {
+                //不存在桶返回null
+                return null
+            }
+            //4. 在链条中线性查找
+            for (let i = 0; i < bucket.length; i++) {
+                const tuple = bucket[i];
+                if (tuple[0] == key) {
+                    bucket.splice(i, 1)
+                    this.count -= 1
+                    //5. 当负载因子小于0.25时需要缩表
+                    if (this.limit > 7 && this.count < this.limit * 0.25) {
+                        var newSize = Math.floor(this.limit/2)
+                        var prime = this.getPrime(newSize)
+                        this.resize(prime)
+                    }
+                    return tuple[1]
+                }
+            }
+
+            //没找到返回null
+            return null
+        }
+
+        // 判断Hash表是否为空
+        HashTable.prototype.isEmpty = function () {
+            return this.count == 0
+        }
+
+        // 返回Hash表的当前元素个数
+        HashTable.prototype.size = function () {
+            return this.count
+        }
+
+        // 哈希表的扩容
+        HashTable.prototype.resize = function (newLimit) {
+            //1. 保存旧的存储内容
+            var oldStorage = this.storage
+
+            //2. 重置所有的属性
+            this.storage = []
+            this.count = 0
+            this.limit = newLimit
+
+            //3. 遍历oldStorage中的bucket
+            for (let i = 0; i < oldStorage.length; i++) {
+                //3.1 取出对应的bucket
+                const bucket = oldStorage[i];
+                //3.2 判断bucket是否为空
+                if (!bucket) continue
+                //3.3 重新计算元数据在扩容后的容积中的位置
+                for (let j = 0; j < bucket.length; j++) {
+                    const tuple = bucket[j];
+                    this.put(tuple[0], tuple[1])
+                }
+
+            }
+        }
+
+        // 是否是质数
+        HashTable.prototype.isPrime = function () {
+            var tmp = Math.sqrt(num)
+            for (let i = 2; i <= tmp; i++) {
+                if (num % i == 0) return false          
+            }
+            return true
+        }
+
+        // 获取质数的方法
+        HashTable.prototype.getPrime = function (num) {
+            // if(this.isPrime(num)) return num
+            // return this.getPrime(num++)
+            while(!this.isPrime(num)){
+                num++
+            }
+            return num
+        }
+
+        //测试代码
+        var ht = new HashTable()
+
+        //插入
+        ht.put("1", "a")
+        ht.put("2", "b")
+        ht.put("3", "c")
+        console.log("add", ht, ht.size())
+
+        ht.put("3", "d")
+        console.log("update", ht, ht.size())
+
+        ht.remove("3")
+        console.log("remove", ht, ht.size())
+
+        console.log("get", ht.get("1"))
+
+    </script>
+</body>
+
+</html>

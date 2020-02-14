@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二叉搜索树BST
+        完美二叉树,完全二叉树,二叉搜索树
+        注意:任何树都可以通过root=》左子节点,右兄弟节点的数据接口,旋转45度角观察后,认为是二叉树
+        术语普及:
+        1.前驱: 相对于当前节点的左子树中最接近当前节点值的节点,比当前节点小一点点,左子树最大值
+        2.后继: 相对于当前节点的右子树中最接近当前节点值的节点,比当前节点大一点点,右子树最小值
+    </title>
+</head>
+
+<body>
+    <script>
+        //二叉搜索树
+        function BinarySearchTree() {
+            //属性
+            this.root = null
+
+            //方法
+            //1. insert(key)
+            //2. search(key)
+            //3. middleOrderTravers:通过中序遍历方式遍历所有节点
+            //4. preOrderTravers:通过前序遍历方式遍历所有节点
+            //5. postOrderTravers:通过后续遍历方式遍历所有节点
+            //6. min:返回树中最小的值/健
+            //7. max:返回树中最大的值/健
+            //8. remove:从中移除某个值/健
+            //9. 层序遍历-》遍历有4种 前序遍历,中序遍历,后续遍历,层序遍历
+        }
+
+        BinarySearchTree.prototype.node = function Node(key) {
+            // this.key = key
+            // this.left = null
+            // this.right = null
+            return {
+                key: key,
+                left: null,
+                right: null
+            }
+        }
+
+        BinarySearchTree.prototype.insert = function (key) {
+            //1. 根据key创建节点
+            var newNode = this.node(key)
+
+            //2. 如果不存在根就则创建根节点
+            if (!this.root) {
+                this.root = newNode
+                return
+            }
+
+            this.insertNode(this.root, newNode)
+        }
+
+        //node:用于比较的node
+        //newNOde:需要新插入的新节点
+        BinarySearchTree.prototype.insertNode = function (node, newNode) {
+            if (newNode.key < node.key) {//向左
+                if (!node.left) {
+                    node.left = newNode
+                    return
+                }
+                this.insertNode(node.left, newNode)
+            } else if (newNode.key > node.key) {//向右
+                if (!node.right) {
+                    node.right = newNode
+                    return
+                }
+                this.insertNode(node.right, newNode)
+            } else {//相等就是替换
+                //TODO:
+            }
+
+
+        }
+
+        //树的遍历
+        //先序遍历, 首先处理root节点,然后先左后右的原则处理子树
+        BinarySearchTree.prototype.preOrderTraversal = function () {
+            this.preOrderTraversalNode(this.root)
+        }
+
+        BinarySearchTree.prototype.preOrderTraversalNode = function (node) {
+            if (node) {
+                console.log(node.key)
+                this.preOrderTraversalNode(node.left)
+                this.preOrderTraversalNode(node.right)
+            }
+        }
+
+        //中序遍历, 相对于树root的两个分支,都是从小到大输出,root节点在相对于中间的位置被处理
+        BinarySearchTree.prototype.middleOrderTraversal = function () {
+            this.middleOrderTraversalNode(this.root)
+        }
+
+        BinarySearchTree.prototype.middleOrderTraversalNode = function (node) {
+            if (node) {
+                this.middleOrderTraversalNode(node.left)
+                console.log(node.key)//当前节点左边处理完成后打印自己
+                this.middleOrderTraversalNode(node.right)
+            }
+        }
+
+        //后续遍历
+        BinarySearchTree.prototype.postOrderTraversal = function () {
+            this.postOrderTraversalNode(this.root)
+        }
+
+        BinarySearchTree.prototype.postOrderTraversalNode = function (node) {
+            if (node) {
+                this.postOrderTraversalNode(node.left)
+                this.postOrderTraversalNode(node.right)
+                console.log(node.key)//当前节点左边处理完成后打印自己
+            }
+        }
+
+        //找最大最小值
+        BinarySearchTree.prototype.min = function () {
+            //1. 获取根节点
+            var node = this.root
+            //2. 最左边的节点
+            while (node.left) {
+                node = node.left
+            }
+            return node.key
+        }
+
+        BinarySearchTree.prototype.max = function () {
+            //1. 获取根节点
+            var node = this.root
+            //2. 最右边的节点
+            while (node.right) {
+                node = node.right
+            }
+            return node.key
+        }
+
+        //搜索特定的key
+        BinarySearchTree.prototype.searchByKey = function (key) {
+            var node = this.root
+
+            while (node) {
+                if (node.key == key) return true//找到了
+                if (node.key < key) {//向右找,往大的找
+                    node = node.right
+                } else {
+                    node = node.left//向左找,往小的找
+                }
+            }
+
+            return false//没找到
+        }
+
+        //删除节点过程分析
+        // 1. 找到要删除的节点
+        // 2. 删除节点的3种情况
+        //    2.1. 删除叶子节点
+        //    2.2. 删除只有一个子节点的节点
+        //    2.3. 删除有个2个子节点的节点(情况比较复杂)
+        BinarySearchTree.prototype.remove = function (key) {
+            //1.寻找要删除的节点
+            var currentNode = this.root
+            var parent = null
+            var isLeft = true
+
+            //1.2 开始寻找
+            while (currentNode.key != key) {
+                parent = currentNode
+                if (key < currentNode.key) {
+                    isLeft = true
+                    currentNode = currentNode.left
+                } else {
+                    isLeft = false
+                    currentNode = currentNode.right
+                }
+
+                //找到最后都没有找到需要删除的节点,这个节点不存在,则返回false
+                if (!currentNode) return false
+            }
+
+            //2.找到了需要处理的节点,并根据具体情况删除节点
+            //2.1 删除的节点没有子节点
+            if (!currentNode.left && !currentNode.right) {
+                if (currentNode == this.root) {
+                    this.root = null//删除的节点是根节点
+                    return true
+                }
+                isLeft ? parent.left = null : parent.right = null
+                return true
+            }
+
+            //2.3 删除的节点有2个子节点
+            if (currentNode.left && currentNode.right) {
+                var succeed = this.findSucceed(currentNode)//找到后继
+                return true
+            }
+
+
+            //2.2 要删除的节点只有一个子节点
+            if (currentNode.left) {//需要删除的节点只有左节点
+                if (currentNode == this.root) {//删除的节点是根节点  null==parent
+                    this.root = currentNode.left
+                    return true
+                }
+                isLeft ? parent.left = currentNode.left : parent.right = currentNode.left
+                return true
+            }
+            if (currentNode.right) {//需要删除的节点只有右节点
+                if (currentNode == this.root) {//删除的节点是根节点  null==parent
+                    this.root = currentNode.right
+                    return true
+                }
+                isLeft ? parent.left = currentNode.right : parent.right = currentNode.right
+                return true
+            }
+        }
+
+        //查找后继
+        BinarySearchTree.prototype.findSucceed = function (targetNode) {
+            if(targetNode.left && targetNode.right){//进入这个方法的前提条件是,删除节点targetNode有2个节点所以第一次进入一定有值
+                var succeedNode = targetNode.right
+                while(succeedNode.left){
+                    succeedNode = currentNode.left
+                }
+                return succeedNode
+            }
+            return null
+        }
+
+        //测试代码
+        var b = new BinarySearchTree()
+        b.insert(11)
+        b.insert(7)
+        b.insert(15)
+        b.insert(13)
+        b.insert(20)
+        b.insert(5)//b.insert(8)
+        b.insert(12)
+
+        console.log("===========", b)
+        b.preOrderTraversal()
+        console.log("===========", b)
+        b.middleOrderTraversal()
+        console.log("===========", b)
+        b.postOrderTraversal()
+
+        console.log("min========", b.min())
+        console.log("max========", b.max())
+
+        console.log("search======", b.searchByKey(7), b.searchByKey(100))
+
+        // b.remove(11)
+        // console.log("remove(根节点)========", b)
+        // b.remove(7)
+        console.log("remove(7)========", b)
+    </script>
+</body>
+
+</html>

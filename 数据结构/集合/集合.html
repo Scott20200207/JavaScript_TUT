@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数据结构之集合 Set</title>
+</head>
+
+<body>
+    <!-- 
+      一种特殊的数组,没有顺序,不能重复
+      特殊操作 并集,交集,差集,子集
+     -->
+
+    <script>
+        (function (container) {
+            function Set() {
+                this.items = []
+            }
+
+            //添加方法
+            Set.prototype.add = function (value) {
+                if (this.has(value)) return false
+                this.items[value] = value
+                return true
+            }
+
+            //是否存在方法
+            Set.prototype.has = function (value) {
+                return this.items.hasOwnProperty(value)
+            }
+
+            //删除方法
+            Set.prototype.remove = function (value) {
+                if (!this.has(value)) return false
+                delete this.items[value]
+                return true
+            }
+
+            Set.prototype.clear = function () {
+                this.items = {}
+            }
+
+            Set.prototype.size = function(){
+                return Object.keys(this.items).length
+            }
+
+            Set.prototype.toString = function () {
+                var desc = ""
+                var keys = Object.keys(this.items)
+                var count = keys.length
+                for (let i = 0; i < count; i++) {
+                    desc += this.items[keys[i]] + " "
+                }
+                return desc
+            }
+
+            Set.prototype.values = function () {
+                return Object.keys(this.items)
+            }
+
+
+            //集合间的操作
+            //并集
+            Set.prototype.union = function (otherSet) {
+                //this : 当前集合
+                //otherSet : 目标集合
+                var values = this.items
+                var keys = Object.keys(this.items)
+                var unionSet = new $.set()
+                for(var i = 0; i<Object.keys(this.items).length; i++){
+                    unionSet.add(values[keys[i]])
+                }
+
+                values = otherSet.items
+                keys = Object.keys(otherSet.items)
+                for(var i = 0; i<Object.keys(otherSet.items).length; i++){
+                    unionSet.add(values[keys[i]])
+                }
+
+                return unionSet
+            }
+
+            //交集
+            Set.prototype.intersection = function (otherSet){
+                //this : 集合A
+                //otherSet : 集合B  
+                var result = new $.set()
+                var akeys = Object.keys(this.items)
+                for(var i = 0; i<akeys.length; i++){
+                    if(otherSet.has(akeys[i])){
+                        result.add(akeys[i])
+                    }
+                } 
+                return result
+            }
+
+            //差集
+            Set.prototype.difference = function (otherSet){
+                //this : 集合A
+                //otherSet : 集合B  
+                var result = new $.set()
+                var akeys = Object.keys(this.items)
+                for(var i = 0; i < akeys.length; i++){
+                    if(!otherSet.has(akeys[i])){
+                        result.add(akeys[i])
+                    }
+                }
+                return result
+            }
+
+            //子集
+            Set.prototype.subSet = function (otherSet){
+                //this : 集合A
+                //otherSet : 集合B  
+                var akeys = Object.keys(this.items)
+                for(var i = 0; i < akeys.length; i++){
+                    if(!otherSet.has(akeys[i])){
+                        return false
+                    }
+                }
+                return true
+            }
+
+            container.$ = {
+                set: Set
+            }
+
+        })(window)
+
+        var set = new $.set()
+        set.add("老夫子")
+        console.log(set.add("老夫子"))
+        set.add("黄忠")
+        set.add("苏烈")
+
+        console.log("toString()", set.toString())
+        console.log("size()", set.size())
+        console.log("===================")
+
+        set.remove("苏烈")
+        console.log(set.toString())
+
+        var set1 =  new $.set()
+        set1.add("安其拉")
+        var set2 =  new $.set()
+        set2.add("安其拉")
+        set2.add("李白")
+        var set3 = set1.union(set2)
+        console.log("set3",set3)
+        console.log("==================")
+
+        var setA1 = new $.set()
+        var setB1 = new $.set()
+        
+        setA1.add("老夫子")
+        setA1.add("黄忠")
+        setB1.add("老夫子")
+        setB1.add("赵云")
+        console.log("交集",setA1.intersection(setB1))
+        console.log("差集", setA1.difference(setB1))
+        console.log("==================")
+
+        var setA2 = new $.set()
+        setA2.add("老夫子")
+        var setB2 = new $.set()
+        setB2.add("老夫子1")
+        setB2.add("赵云")
+        console.log("setA2是否是setB2的子集", setA2.subSet(setB2))
+    </script>
+</body>
+
+</html>

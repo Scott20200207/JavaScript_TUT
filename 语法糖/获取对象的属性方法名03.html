@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>分别获取JavaScript对象属性名和方法名</title>
+</head>
+<body>
+    <script>
+        // 创建一个对象的构造方法
+        function myObj(name, attr) {
+            this.name = name;
+            this.attr = attr;
+
+            this.sayHi = function () {
+                return 'hi everyone!!!';
+            }
+        }
+
+        // 创建一个对象
+        var myTester = new myObj("shinejaie", 1)
+
+        // 获取对象方法
+        for (var i in myTester) {
+            if (myTester.hasOwnProperty(i) && typeof myTester[i] == "function") {
+                console.log("对象方法: ", i, "=", myTester[i])
+            }
+        }
+        // 输出 对象方法: sayHi = () { return 'hi everyone!!!'; }
+
+        // 获取对象属性
+        for (var i in myTester) {
+            if (myTester.hasOwnProperty(i) && typeof myTester[i] != "function") {
+                console.log("对象属性: ", i);
+            }
+        }
+        // 输出 对象属性: name 对象属性: attr 
+    </script>
+</body>
+</html>

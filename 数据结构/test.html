@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 创建一个对象的构造方法
+    function myObj(name, attr) {
+        this.name = name;
+        this.attr = attr;
+
+        this.sayHi = function () {
+            return 'hi everyone!!!';
+        }
+    }
+
+    // 创建一个对象
+    var myTester = new myObj("shinejaie", 1)
+    console.log("myTester", myTester)
+    // 获取直接在对象上定义(可枚举)的属性和方法
+    var arr = Object.keys(myTester);
+    console.log('arr', arr); // 输出 arr ["name", "attr", "sayHi"]
+
+    // 返回的数组的所有属性(可枚举或不可枚举)直接找到给定对象。
+    console.log("attr", Object.getOwnPropertyNames(myTester)); // 输出 attr ["name", "attr", "sayHi"]
+
+    // 在 Object 原型上增加一个属性
+    Object.prototype.newShine = "it's me";
+
+    // 返回可枚举属性一直找到该对象的原型链
+    for (var i in myTester) {
+        console.log(i);
+    }
+    // 输出 name,attr,sayHi,newShine
+
+    // 返回直接定义在该对象上的可枚举属性
+    for (var i in myTester) {
+        if (myTester.hasOwnProperty(i)) {
+            console.log(i);
+        }
+    }
+    // 输出 name,attr,sayHi
+
+    var array1 = []
+    var array2 = new Array()
+    var array3 = new Array(10)
+    console.log(array1.length, array2.length, array3.length)
+    </script>
+</body>
+
+</html>

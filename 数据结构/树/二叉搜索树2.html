@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二叉搜索树BST
+        完美二叉树,完全二叉树,二叉搜索树
+        注意:任何树都可以通过root=》左子节点,右兄弟节点的数据接口,旋转45度角观察后,认为是二叉树
+    </title>
+</head>
+
+<body>
+    <script>
+        function BinarySearchTree2() {
+            this.root = null
+
+            function Node(key){
+                this.key = key
+                this.left = null
+                this.right = null
+            }
+
+            BinarySearchTree2.prototype.insert = function(key){
+                //1. 根据key创建节点
+                var node = new Node(key)
+
+                //2. 如果不存在根就创建
+                if(!this.root){
+                    this.root = node
+                    return
+                }
+
+
+            }
+
+        }
+
+        var b2 = new BinarySearchTree2()
+        b2.insert(123)
+        console.log(b2)
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>哈希函数</title>
+</head>
+<body>
+    <script>
+        //设计哈希函数 
+        //1. 将字符串转换成一个比较大的数字: hashcode
+        //2. 将大的数字压缩到一个指定的数组范围内
+        function hashFunc (str, arraySize){
+            //a. 定一个hashcode变量
+            var hashcode = 0
+            //b. 使用霍纳算法,来计算hashcode,如果加出来的数字偏小则容易出现冲突,偏大的数据冲突的几率小一些,arraySize质数也可以使得分布更均匀
+            //cast => unicode编码
+            for (var i = 0; i < str.length; i++) {
+                hashcode = 37 * hashcode + str.charCodeAt(i)//31, 37, 41, 43 质数 
+            }
+            //c. 取余操作
+            var index = hashcode % arraySize // var index = hashcode & (arraySize-1) = hashcode % arraySize 效果等同
+            return index
+        }
+
+        //测试
+        console.log(hashFunc("a", 16), "a".charCodeAt(0))
+        console.log(hashFunc("b", 16), "b".charCodeAt(0))
+        console.log(hashFunc("f", 16), "f".charCodeAt(0))
+    </script>
+</body>
+</html>
