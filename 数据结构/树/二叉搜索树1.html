@@ -195,8 +195,36 @@
             }
 
             //2.3 删除的节点有2个子节点
+            //分析最多要处理的节点包括:
+            //RootNode(左右), delParentNode(左|右), delNode(左右), SucceedNode(右), SucceedParentNode(左空|右)
             if (currentNode.left && currentNode.right) {
-                var succeed = this.findSucceed(currentNode)//找到后继
+                //2.3.1 首先找到后继节点及后继节点的父节点
+                var succeedAndParent = this.findSucceed(currentNode)
+                var succeed = succeedAndParent[0]
+                var succeedParent = succeedAndParent[1]
+                var oldRoot = this.root
+
+                //2.3.2 判断当前要删除的节点是否是一个根节点
+                if(currentNode == this.root){
+                    this.root = succeed
+                }
+
+                //2.3.3 如果被删除节点有父节点,那么后继节点要挂载到被删除节点所在的父节点的对应位置
+                if(parent){
+                    isLeft?parent.left=succeed:parent.right=succeed
+                }
+
+                //2.3.4 后继节点的左节点接管被删除节点的左节点
+                succeed.left = currentNode.left //因为:所以一定在currentNode.left<所以一定在currentNode<后继节点方向的所有节点, succeed左边没有节点
+
+                //2.3.4 后继节点的右节点接管被删除节点的右节点,并记录原来后继点的右节点
+                //后继节点右方向的所有节点 < currentNode.right
+                var succeedRightNode = succeed.right
+                succeedParent.left = null
+                if(succeedParent && succeedParent!=oldRoot) succeed.right = currentNode.right//被删除节点的右节点必然>succeed.right,所以占据这个位置;如果后继节点的父节点是根,那么后继节点left不用处理及currentNode.right就是succeed
+                if(succeedParent && succeedParent!=oldRoot) succeedParent.left = succeedRightNode//succeed拿走了,succeedParent.left就空了, succeed右方向节点<succeedParent,所以放到succeedParent.left
+               
+
                 return true
             }
 
@@ -220,16 +248,21 @@
             }
         }
 
-        //查找后继
+        //查找后继与其父节点
         BinarySearchTree.prototype.findSucceed = function (targetNode) {
             if(targetNode.left && targetNode.right){//进入这个方法的前提条件是,删除节点targetNode有2个节点所以第一次进入一定有值
+                //后继节点
                 var succeedNode = targetNode.right
+                //后继节点父节点
+                var succeedNodeParent = targetNode
+
                 while(succeedNode.left){
-                    succeedNode = currentNode.left
+                    succeedNodeParent = succeedNode
+                    succeedNode = succeedNode.left
                 }
-                return succeedNode
+                return [succeedNode,succeedNodeParent]
             }
-            return null
+            return [null, null]
         }
 
         //测试代码
