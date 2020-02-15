@@ -206,23 +206,26 @@
 
                 //2.3.2 判断当前要删除的节点是否是一个根节点
                 if(currentNode == this.root){
-                    this.root = succeed
+                    this.root = succeed//此逻辑中,被删除的节点一定存在left和right 2个子节点,所以succeed必然存在
                 }
 
                 //2.3.3 如果被删除节点有父节点,那么后继节点要挂载到被删除节点所在的父节点的对应位置
-                if(parent){
+                if(parent){//只有删除节点就是root节点时,不需要关心parent节点left或right应该挂载谁,因为parent=null
                     isLeft?parent.left=succeed:parent.right=succeed
                 }
 
-                //2.3.4 后继节点的左节点接管被删除节点的左节点
-                succeed.left = currentNode.left //因为:所以一定在currentNode.left<所以一定在currentNode<后继节点方向的所有节点, succeed左边没有节点
+                //2.3.4 处理后继节点.left => 后继节点的左节点接管被删除节点的左节点
+                succeed.left = currentNode.left //因为:currentNode.left < currentNode < 后继节点方向的所有节点(currentNode.right), 并且succeed左边原来没有节点并不需要关心
 
-                //2.3.4 后继节点的右节点接管被删除节点的右节点,并记录原来后继点的右节点
+                //2.3.4 处理后继节点.right => 后继节点的右节点接管被删除节点的右节点,并记录原来后继点的右节点
                 //后继节点右方向的所有节点 < currentNode.right
                 var succeedRightNode = succeed.right
-                succeedParent.left = null
-                if(succeedParent && succeedParent!=oldRoot) succeed.right = currentNode.right//被删除节点的右节点必然>succeed.right,所以占据这个位置;如果后继节点的父节点是根,那么后继节点left不用处理及currentNode.right就是succeed
-                if(succeedParent && succeedParent!=oldRoot) succeedParent.left = succeedRightNode//succeed拿走了,succeedParent.left就空了, succeed右方向节点<succeedParent,所以放到succeedParent.left
+                succeedParent.left = null//此逻辑分支后继节点一定存在父节点,后继节点移走了,后继节点的父节点的left首先设置为null,如果有需要会赋值后继节点的right方向节点
+                if(succeedParent && succeedParent.right!=succeed) {//被删除节点的right节点就是succeed,那么就不需要处理succeed.right,保持原样,同理succeedParent节点就是要被删除的节点
+                    //被删除的节点不是后继节点的父节点情况处理如下
+                    succeed.right = currentNode.right //被删除节点的右节点必然>succeed.right,所以占据这个位置;如果后继节点的父节点是根,那么后继节点left不用处理及currentNode.right就是succeed
+                    succeedParent.left = succeedRightNode //succeed拿走了,succeedParent.left就空了, succeed右方向节点<succeedParent,所以放到succeedParent.left
+                }
                
 
                 return true
