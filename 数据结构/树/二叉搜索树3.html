@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function BinarySearchTree(data) {
+            if (!this instanceof BinarySearchTree) {
+                return new BinarySearchTree(node, data)
+            }
+            this.data = data
+            this.left = null
+            this.right = null
+        }
+
+        BinarySearchTree.prototype.insert = function (root, data) {
+            if(root){
+                if(data == root.data){
+                    //单个数据不处理,或者一个对象替换引用并接手left,right节点
+                }else if(data<root.data){
+                    if(root.left) {
+                        this.insert(root.left, data)
+                    }else{
+                        root.left = new BinarySearchTree(data)
+                    }
+                }else{
+                    if(root.right) {
+                        this.insert(root.right, data)
+                    }else{
+                        root.right = new BinarySearchTree(data)
+                    }
+                }
+            }
+        }
+
+        BinarySearchTree.prototype.remove = function (root, data) {
+            //1. 找到需要删除的节点
+            var delNode = root
+            var isLeft = true
+            var delNodeParent = null
+            while(delNode.data!=data){
+                delNodeParent = delNode
+                if(data<delNode.data){
+                    delNode = delNode.left
+                    isLeft = true
+                }else if(data>delNode.data){
+                    delNode = delNode.right
+                    isLeft = false
+                }
+                //需要删除的节点不存在
+                if(!delNode) return null;
+            }
+
+
+            if(delNode.left && delNode.right){
+                var succeed = this.processSucceedNode(delNode.right)
+                succeed.left = delNode.left
+                succeed.right = delNode.right
+                if(delNodeParent){
+                    isLeft?delNodeParent.left=succeed:delNodeParent.right=succeed
+                    return root
+                }
+                
+                return succeed
+
+            }else if(delNode.left && !delNode.right){
+                if(delNodeParent){
+                    isLeft?delNodeParent.left=delNode.left:delNodeParent.right=delNode.left
+                    return root
+                }
+                return delNode.left
+            }else if(!delNode.left && delNode.right){
+                if(delNodeParent){
+                    isLeft?delNodeParent.left=delNode.right:delNodeParent.right=delNode.right
+                    return root
+                }
+                return delNode.right
+            }else{
+                if(delNodeParent){
+                    isLeft?delNodeParent.left=null:delNodeParent.right=null
+                    return root
+                }
+                //throw new Error("只有唯一的根节点,不能删除")
+                return null
+            }
+        }
+
+        BinarySearchTree.prototype.findNode = function (root, data) {
+            if(root.data==data) return root
+            
+            var result = null
+            data<root.data?result=find(root.left, data):result=find(root.right, data)
+            
+
+            return result
+        }
+
+        //处理后继节点
+        BinarySearchTree.prototype.processSucceedNode = function(subRoot){
+            var succeedParent = null
+            while(subRoot.left){
+                succeedParent = subRoot
+                subRoot = subRoot.left
+            }
+
+            if(succeedParent){
+                succeedParent.left = subRoot.right
+            }
+
+            return subRoot
+        }
+
+        //中序遍历=》结果是从小到大的排列
+        BinarySearchTree.prototype.middelOrderReserve = function (tree) {
+            if(!tree) return
+            this.middelOrderReserve(tree.left)
+            console.log(tree.data)
+            this.middelOrderReserve(tree.right)
+        }
+
+        //测试一把,为什么这么写middelOrderReserve 会被运行,且当前的this指向了windows ???
+        // (function(window){
+            
+        // })(window)
+
+        var datas = [5,1,7,4,8,9,6]
+        var root = new BinarySearchTree(5)
+        for (let i = 1, len=datas.length; i < len; i++){
+            root.insert(root, datas[i])
+        }
+        console.log("中序遍历结果如下:")
+        root.middelOrderReserve(root)
+        console.log(root);
+
+        console.log("==============")
+        root = root.remove(root, 8)
+        root.middelOrderReserve(root)
+        console.log(root);
+
+        console.log("==============")
+        root = root.remove(root, 5)
+        root.middelOrderReserve(root)
+        console.log(root);
+    </script>
+</body>
+
+</html>
