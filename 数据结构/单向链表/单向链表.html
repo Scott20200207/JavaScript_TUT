@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>单向链表</title>
+</head>
+<body>
+  <script>
+    //单项链表类
+    function LinkedList(){
+      this.header = null
+      this.length = 0
+
+      //节点类
+      function Node(data){
+        this.data = data
+        this.next = null
+      }
+
+      //方法区
+      //追加方法
+      LinkedList.prototype.append = function(data){
+         //1.新建节点
+         var node = new Node(data)
+
+         //2.判断是否是添加的第一个节点
+         if(0==this.length){//第一个节点
+            this.header = node
+         }else{//不是第一个节点
+            //找到最后一个节点,next属性为空的节点即为最后一个节点
+            var current = this.header
+            while(current.next){
+              current = current.next
+            }
+            //最后节点的next指向新的节点
+            current.next = node
+         }
+
+         //链表长度改变
+         this.length+=1
+
+         return true
+      }
+
+      //toString方法
+      LinkedList.prototype.toString= function(){
+        var currentNode = this.header
+        var result = ""
+        while(currentNode){
+          result += currentNode.data + " "
+          currentNode = currentNode.next
+        }
+        return result 
+      }
+
+      //insert方法
+      LinkedList.prototype.insert = function(data, position){
+        //边界判断,排除非法操作  注意这里可以包含length值，即给最后一个添加下一个
+        if(position<0 || position>this.length) return false
+
+        //新加入节点
+        var newNode = new Node(data)
+        
+        if(0==position){
+          newNode.next = this.header
+          this.header = newNode
+        }else{
+          //在到前一个，后一个，因为不是数组，所以需要利用引用方式找到过度的临界节点
+          var previousNode = null
+          var nextNode = null
+          var currentNode = this.header//临界节点,初始值是header
+          var index = 0 //因为不是数组,创建伪索引下标
+          while(index++ < position){//如果需要插入的位置是2,此时index=2   2<2->false  则跳出循环，所以currentNode是previousNode,而newNode的next指向currentNode(需要后移的目标),如果刚好是最后一个可以把null看做是下一个nextNode
+            this.previousNode = currentNode
+            currentNode = currentNode.next
+          }
+          this.previousNode.next = newNode
+          newNode.next = currentNode
+        }
+
+        this.length += 1
+        return true
+      }
+
+      //get 方法
+      LinkedList.prototype.get = function(position){
+        if(0>position || position>this.length-1) return null//索引从0开始,最后一个元素位置在length-1
+        var index = 0
+        var currentNode = this.header
+        while(index++<position){
+          currentNode = currentNode.next
+        }
+
+        return currentNode
+      }
+
+      //indexOf 方法
+      LinkedList.prototype.indexOf = function(data){
+        var index = 0
+        var currentNode = this.header
+        while(currentNode){
+          if(currentNode.data == data) return index
+          index += 1
+          currentNode = currentNode.next
+        }
+
+        return -1;
+      }
+
+      LinkedList.prototype.update = function(newData, position){
+        var node = this.get(position)
+        if(node){
+          node.data = newData
+          return true
+        }
+        return false
+      }
+
+      LinkedList.prototype.removeAt = function(position){
+        if(0>position || position>=this.length) return null
+        
+        var currentNode = this.header
+        if(0==position) {
+          this.header = this.header.next
+          this.length -= 1
+          return currentNode
+        }
+
+        var index = 0
+        var previousNode = null
+        while(index++ < position){
+          previousNode = currentNode
+          currentNode = currentNode.next
+          //index += 1
+        }
+        previousNode.next = currentNode.next
+        this.length -= 1
+        return currentNode
+      }
+
+      LinkedList.prototype.remove = function(data){
+         var position = this.indexOf(data)
+         return this.removeAt(position)
+      }
+
+      LinkedList.prototype.isEmpty = function(){
+        return this.length == 0
+      }
+
+      LinkedList.prototype.size = function(){
+        return this.length
+      }
+    }
+
+    
+    (function(){
+      var flag = 0;
+      function FlagCount(){
+        return ++flag
+      }
+      window.$f = FlagCount
+    })()
+
+    //测试
+    var myLinkedList = new LinkedList()
+    myLinkedList.append("刘备")
+    myLinkedList.append("关羽")
+    myLinkedList.append("张飞")
+
+    //myLinkedList.insert("赵云",-1)
+    //myLinkedList.insert("赵云",0)
+    //myLinkedList.insert("赵云",3)
+    //myLinkedList.insert("赵云",4)
+    
+    console.log($f(), myLinkedList.toString())
+
+    //console.log($f(), myLinkedList.get(1).data)
+
+    //console.log($f(), myLinkedList.indexOf("刘备"))
+    //console.log($f(), myLinkedList.indexOf("关羽1"))
+
+    //console.log($f(), myLinkedList.update("赵云",3), myLinkedList.toString())
+
+    //console.log($f(), myLinkedList.indexOf("关羽1"))
+    //console.log($f(), myLinkedList.removeAt(3))
+    //console.log($f(), myLinkedList.toString())
+
+    console.log($f(), myLinkedList.remove("关羽"))
+    console.log($f(), myLinkedList.remove("张飞"))
+    console.log($f(), myLinkedList.remove("赵云"))
+    console.log($f(), myLinkedList.toString())
+
+    console.log($f(), myLinkedList.isEmpty())
+    console.log($f(), myLinkedList.size())
+
+  </script>
+</body>
+</html>

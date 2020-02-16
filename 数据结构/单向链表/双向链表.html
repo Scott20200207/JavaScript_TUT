@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>单向链表</title>
+</head>
+<body>
+  <script>
+    (function(){
+      //单项链表类
+      function DoublyLinkedList(){
+        this.first = null
+        this.last = null
+        this.length = 0
+      }
+
+      //节点类
+      function Node(data){
+        this.data = data
+        this.prev = null
+        this.next = null
+      }
+
+      //方法区
+      //追加方法
+      DoublyLinkedList.prototype.append = function(data){
+          //1.新建节点
+          var newNode = new Node(data);
+
+          //2.是第一个节点时
+          if(null==this.first){
+            this.first = newNode
+            //this.last = newNode
+          }else{//不是第一个节点时
+            //2.1记录当前最后一个节点,并处理最后一个节点
+            var oldLast = this.last
+            oldLast.next = newNode
+            newNode.prev = oldLast
+            //newNode.next=null最后一个的next是null，所以不写了
+          }
+
+          //4.设置最后一个节点,并改变链表长度
+          this.last = newNode;
+          this.length+=1;
+      }
+
+      DoublyLinkedList.prototype.toString = function(){
+        var result = ""
+        if(0==this.length) return result
+        
+        var index = 0
+        var currentNode = this.first
+        while(index++<this.length){
+          result += currentNode.data + " "
+          currentNode = currentNode.next
+        }
+
+        return result
+      }
+
+      DoublyLinkedList.prototype.insert = function(data, position){
+        //1. 排除非法操作
+        if(0>position || position>this.length) return false
+
+        //2.新建节点
+        var newNode = new Node(data);
+        if(0==position){//在链表顶端添加元素
+          if(this.first){//非空链表 即this.length>0
+            newNode.next = this.first
+            this.first.prev = newNode
+            this.first = newNode
+          }else{//空链表this.length==0
+            this.first = newNode
+            this.last = newNode
+          }
+        }else if(this.length==position){//在链表末尾的下一个位置添加元素
+          newNode.prev = this.last
+          this.last.next = newNode
+          this.last = newNode
+        }else{
+          //这里不用考虑空链表情况，在上面已经被排除了length=0,那么position必然=0
+          //debugger
+          var currentNode = this.first
+          var index = 0
+          while(index++ < position){
+            currentNode = currentNode.next
+          }
+          //假设2个元素a,b中间插入一个对象c, a.next, b.previous, c.previous, c.next 4个点都需要修正引用 
+          newNode.prev = currentNode.prev // c.previous
+          newNode.next = currentNode //c.next
+          currentNode.prev.next = newNode //-> a.next
+          currentNode.prev = newNode // b.previous
+        }
+
+        this.length += 1
+        return true
+      }
+
+      //return DoublyLinkedList;
+      window.$1 = function(){//向外暴露一个全局函数
+        return {
+          linkedList: function(){
+            return new DoublyLinkedList();
+          }
+        }
+      }
+    })()
+    
+    //console.log($1)
+    var myLinkedList = $1().linkedList()
+    myLinkedList.append("刘备")
+    myLinkedList.append("关羽")
+    myLinkedList.append("张飞")
+
+    //console.log(myLinkedList)
+    console.log("toString()", myLinkedList.toString())
+
+    var r = myLinkedList.insert("赵云",4);
+
+    console.log("toString()", r, myLinkedList.toString())
+  </script>
+</body>
+</html>

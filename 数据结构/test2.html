@@ -8,28 +8,19 @@
 </head>
 <body>
     <script>
-        // var objects = [{x:1}, {y:2}, {z:3}]
-        // var merged = objects.reduce(union)
-        // console.log(objects, merged)
-
-        var a = [1,2,3,4]
-        var sum = a.reduceRight(function(x,y){
-            console.log(x, y , x+y)
-            return x+y
-        },0)
-        console.log(a, sum)
-        console.log("-------------")
-        console.log(typeof([]))
-        console.log(typeof({}))
-        console.log(typeof("abc"))
-
         function Test(){
 
         }
-        console.log(typeof(Test))
-        console.log(Math.floor(1.5)===2)
-        console.log(Math.ceil(1.5))
 
+        Test.prototype.do1 = function(){
+            console.log("get into do1", this);
+        }
+
+        ;(function(window){
+            console.log(window)
+            
+
+        })(window)
     </script>
 </body>
 </html>

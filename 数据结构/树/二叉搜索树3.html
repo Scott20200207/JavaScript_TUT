@@ -19,6 +19,7 @@
             this.right = null
         }
 
+        //新增与修改操作(由于本例未持有引用对象,单纯值没有处理修改的情况)
         BinarySearchTree.prototype.insert = function (root, data) {
             if(root){
                 if(data == root.data){
@@ -39,6 +40,7 @@
             }
         }
 
+        //删除操作
         BinarySearchTree.prototype.remove = function (root, data) {
             //1. 找到需要删除的节点
             var delNode = root
@@ -86,11 +88,12 @@
                     isLeft?delNodeParent.left=null:delNodeParent.right=null
                     return root
                 }
-                //throw new Error("只有唯一的根节点,不能删除")
+                throw new Error('只有唯一的根节点,不能删除', 1);
                 return null
             }
         }
 
+        //查找操作
         BinarySearchTree.prototype.findNode = function (root, data) {
             if(root.data==data) return root
             
@@ -99,6 +102,24 @@
             
 
             return result
+        }
+
+        //最小值
+        BinarySearchTree.prototype.min = function (root) {
+            var leftNode = root
+            while(leftNode.left){
+                leftNode = leftNode.left
+            }
+            return leftNode.data
+        }
+
+        //最大值
+        BinarySearchTree.prototype.max = function (root) {
+            var rightNode = root
+            while(rightNode.right){
+                rightNode = rightNode.right
+            }
+            return rightNode.data
         }
 
         //处理后继节点
@@ -125,29 +146,35 @@
         }
 
         //测试一把,为什么这么写middelOrderReserve 会被运行,且当前的this指向了windows ???
-        // (function(window){
-            
-        // })(window)
+        //去掉额外代码执行片段后,错误信息:Uncaught TypeError: (intermediate value)(...) is not a function
+        //缺少‘;’,导致(function(window){})(),把前面的内容当作是执行对象来这行了下面这个内容
+        ;(function(window){
+            // 测试删除唯一节点
+            // var root = new BinarySearchTree(5)
+            // root.remove(root,5)
 
-        var datas = [5,1,7,4,8,9,6]
-        var root = new BinarySearchTree(5)
-        for (let i = 1, len=datas.length; i < len; i++){
-            root.insert(root, datas[i])
-        }
-        console.log("中序遍历结果如下:")
-        root.middelOrderReserve(root)
-        console.log(root);
+            var datas = [5,1,7,4,8,9,6]
+            var root = new BinarySearchTree(5)
+            for (let i = 1, len=datas.length; i < len; i++){
+                root.insert(root, datas[i])
+            }
+            console.log("中序遍历结果如下:")
+            root.middelOrderReserve(root)
+            console.log(root);
 
-        console.log("==============")
-        root = root.remove(root, 8)
-        root.middelOrderReserve(root)
-        console.log(root);
+            console.log("==============")
+            root = root.remove(root, 8)
+            root.middelOrderReserve(root)
+            console.log(root);
 
-        console.log("==============")
-        root = root.remove(root, 5)
-        root.middelOrderReserve(root)
-        console.log(root);
+            console.log("==============")
+            root = root.remove(root, 5)
+            root.middelOrderReserve(root)
+            console.log(root);
+        })(window)
+
         
+
     </script>
 </body>
 
