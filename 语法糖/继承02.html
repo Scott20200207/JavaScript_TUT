@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        class Person {
+            constructor(name, age) {
+                this.name = name
+                this.age = age
+            }
+
+            sayHello() {
+                console.log("hello world")
+            }
+        }
+
+        class Student extends Person {
+            constructor(name, age, school) {
+                super(name)
+                this.school = school
+            }
+
+            printSchoolName() {
+                console.log(this.school)
+            }
+        }
+
+        var stu = new Student("佩奇", 5, "梦工厂")
+        stu.printSchoolName()
+        console.log(stu)
+    </script>
+</body>
+
+</html>

@@ -13,19 +13,20 @@
             this.age = age
         }
 
-        Person.prototype.setName = function () {
-            this.name = name
+        Person.prototype.sayHello = function () {
+            console.log("hello world")
         }
 
-        function Student(name, age, price){
+        function Student(name, age, school){
             Person.call(this, name, age)//赋值
-            this.price = price
+            this.school = school
         }
 
-        Student.prototype = new Person()//为了看见父类的方法
+        //Student.prototype = new Person()//为了看见父类的方法
+        Student.prototype = Object.create(Person.prototype)
         Student.prototype.constructor = Student //修正构造方法
-        Student.prototype.setPrice = function(price){
-            this.price = price
+        Student.prototype.printSchoolName = function(){
+            console.log(this.school)
         }
 
         var st = new Student("张三", 18,40000)

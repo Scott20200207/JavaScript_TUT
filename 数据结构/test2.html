@@ -18,8 +18,14 @@
 
         ;(function(window){
             console.log(window)
-            
-
+            var str = ""
+            for(var i=0; i<5; i++){
+                str += i+"-"
+            }
+            console.log(str)
+            var arrayStr = str.split("-")
+            arrayStr.pop()
+            console.log(arrayStr.join("-"))
         })(window)
     </script>
 </body>
